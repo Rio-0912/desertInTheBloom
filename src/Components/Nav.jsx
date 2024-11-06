@@ -95,7 +95,7 @@ const Nav = () => {
   return (
     <div>
       <div className="h-[fit]  flex justify-center w-full bg-[#bda3a7] p-0.7 md:p-1">
-        Use Code "DESERTLOVE10" To Get 10% OFF
+       Get Free Shipping All over the India *
       </div>
 
       <div className="px-2 sm:px-4 h-full items-center w-full flex justify-between shadow">
