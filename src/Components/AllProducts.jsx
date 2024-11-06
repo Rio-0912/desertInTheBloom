@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCardSkeleton from '../Skeleton/ProductCardSkeleton';
 import ProductCard from './ProductCard';
 import axios from 'axios'
@@ -6,7 +6,7 @@ import axios from 'axios'
 const AllProducts = () => {
     const [loader, setLoader] = useState(false);
     const url = import.meta.env.backedUrl;
-    const [products,setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
 
     const getProducts = async () => {
         try {
@@ -21,11 +21,11 @@ const AllProducts = () => {
         }
     };
 
-useEffect(() => {
-  getProducts()
+    useEffect(() => {
+        getProducts()
 
 
-}, [])
+    }, [])
 
     return (
         <div className=''>
@@ -43,10 +43,10 @@ useEffect(() => {
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-3 md:px-6">
-                           {products?.map((product) => (
-    <ProductCard key={product.p_id} data={product} />  // Make sure you're passing a single product here
-))}
+                        <div className="grid grid-cols-1   md:grid-cols-2 lg:grid-cols-3     gap-4 px-3 md:px-6">
+                            {products?.map((product) => (
+                                <ProductCard key={product.p_id} data={product} />  // Make sure you're passing a single product here
+                            ))}
                         </div>
                     )}
                 </div>
