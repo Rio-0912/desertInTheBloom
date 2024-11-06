@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import ProductCardSkeleton from '../Skeleton/ProductCardSkeleton';
 import ProductCard from './ProductCard';
+import axios from 'axios'
 
 const AllProducts = () => {
     const [loader, setLoader] = useState(false);
-    const [products] = useState([
-        // Dummy product data
-        { _id: '1', title: 'Sample Product 1', color: [{ sizeAndQuantity: [{ image: ['https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcT78FM3Zh5FfYTp9vzz4gdGMI623XpOwDc-z5fiwq2gJX1Mj4xEaebsSSs65PmUV6wmHLE_OQkA_dEWgZiy8JlpNZ55odtDBxriTi9wilc'] }] }], price : 1000 },
-        { _id: '2', title: 'Sample Product 2', color: [{ sizeAndQuantity: [{ image: ['https://thekurtacompany.com/cdn/shop/products/navy-blue-printed-kurta-614052.jpg?v=1691134373&width=320'] }] }],price : 1000 },
-        // Add more dummy products as needed
-    ]);
+    const url = import.meta.env.backedUrl;
+    const [products,setProducts] = useState([]);
+
+    const getProducts = async () => {
+        try {
+            setLoader(true);
+            const res = await axios.get(`http://localhost:8081/api/products`); // Adjusted to get products from the API
+            setLoader(false);
+            setProducts(res.data); // Update state with fetched data
+            console.log(res.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setLoader(false);
+        }
+    };
+
+useEffect(() => {
+  getProducts()
+
+
+}, [])
 
     return (
         <div className=''>
@@ -28,9 +44,9 @@ const AllProducts = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-3 md:px-6">
-                            {products.map((product) => (
-                                <ProductCard key={product._id} data={product} />
-                            ))}
+                           {products?.map((product) => (
+    <ProductCard key={product.p_id} data={product} />  // Make sure you're passing a single product here
+))}
                         </div>
                     )}
                 </div>

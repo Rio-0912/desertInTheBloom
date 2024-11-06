@@ -5,7 +5,7 @@ const ProductCard = ({ data }) => {
     const navigate = useNavigate();
 
     const redirect = () => {
-        navigate(`/product/${data?._id}`);
+        navigate(`/product/${data?.p_id}`);
     };
 
     return (
@@ -15,18 +15,18 @@ const ProductCard = ({ data }) => {
         >
             <div className="min-h-[65%] md:min-h-[80%] flex justify-center items-center">
                 <img
-                    src={data?.color[0]?.sizeAndQuantity[0]?.image[0] || "/placeholder-image.jpg"}
-                    alt="Product"
-                    className="object-cover w-full h-full rounded"
+                    src={data?.img || "/placeholder-image.jpg"}
+                    alt={data?.pname || "Product"}
+                    className="object-cover w-full h-[75vh] rounded"
                 />
             </div>
             <div className="flex flex-col">
                 <div className='flex justify-between p-1'>
                     <p className="font-semibold mt-1 text-sm md:text-lg">
-                        {data?.title || 'Sample Product'}
+                        {data?.pname || 'Sample Product'}
                     </p>
-                    <p className="  mt-1 text-sm md:text-lg">
-                        ₹ {data?.price || 'Sample Product'}
+                    <p className="mt-1 text-sm md:text-lg">
+                        ₹ {data?.p_price || '0'}
                     </p>
                 </div>
 
