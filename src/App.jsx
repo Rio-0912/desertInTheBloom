@@ -9,6 +9,7 @@ import Profile from './Pages/Profile';
 import Fav from './Components/Fav';
 import AllOrders from './Components/AllOrder';
 import Cart from './Pages/UserCart';
+import SingleProduct from './Pages/SingleProduct';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/product" element={<SingleProduct />} />
 
           <Route path="/userProfile" element={<UserProfileRio />} />
           <Route path="/profile" element={<Profile />} />
