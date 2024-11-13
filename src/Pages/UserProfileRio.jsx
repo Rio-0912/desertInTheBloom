@@ -7,7 +7,7 @@ import { RiInformation2Line } from "react-icons/ri";
 import Nav from "../Components/Nav";
 import axios from 'axios';
 
-const ProfilePage = () => {
+const ProfilePage = ({}) => {
     const { user, isLoaded } = useUser();
     const [loader, setLoader] = useState(true);
     const [username, setUsername] = useState("");
@@ -53,7 +53,8 @@ const ProfilePage = () => {
             setRoomNo(splitAddress[0]?.trim() || "");
             setArea(splitAddress[1]?.trim() || "");
             setPincode(cust_zip || "");
-
+           
+           
             // Find country
             const country = countries.find(c => c.name === cust_country);
             if (country) {
@@ -98,7 +99,7 @@ const ProfilePage = () => {
             setUsername(user.firstName || "");
             setEmail(user.emailAddresses[0].emailAddress || "");
             setMobileNo(user.phoneNumbers[0]?.phoneNumber || "");
-
+            
             setLoader(false);
         }
     };

@@ -101,79 +101,99 @@ const UserCart = () => {
   ]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartLoader, setCartLoader] = useState(false);
-  const [discount, setDiscount] = useState(0);
+  const [discount, setDiscount] = useState(0); const [globleadd, setGlobleadd] = useState('')
   const [couponCode, setCouponCode] = useState('');
   const [discountState, setDiscountState] = useState(false);
   const [shippingCharge, setShippingCharge] = useState(0);
+  const [userPrdVal, setUserPrdVal] = useState([])
+
+  const sendDataOfEachCrtItemBackToParent = (data) => {
+    setUserPrdVal((prevUserPrdVal) => {
+      // Check if the product with the same p_id already exists in the state
+      const isProductExist = prevUserPrdVal.some((product) => product.p_id === data.p_id);
+
+      // If the product does not exist, append it to the state
+      if (!isProductExist) {
+        return [...prevUserPrdVal, data];
+      }
+      return prevUserPrdVal; // If the product exists, return the previous state without adding it
+    });
+  };
 
   const calculateTotalPrice = () => {
     let subtotal = 0;
 
+    console.log(cart);
+
+    // Loop through the cart items and calculate total price
     for (const item of cart) {
-      subtotal += item?.product?.selling_price * item.quantity;
+      // Find the product by matching p_id from userPrdVal
+      const product = userPrdVal.find(product => product.p_id === item.p_id);
+
+      // If the product is found, calculate price (quantity * selling_price)
+      if (product) {
+        subtotal += product.p_price * item.quantity;
+      }
     }
 
+    // Shipping calculation based on subtotal
     let shipping = 0;
     if (subtotal < 1500) {
       shipping = 50;
     }
 
+    // Final total including shipping and discount
     const finalTotal = subtotal + shipping - discount;
     setTotalPrice(finalTotal.toFixed(2));
     setShippingCharge(shipping);
   };
 
-  useEffect(() => {
-    calculateTotalPrice();
-  }, [cart, discount, discountState]);
+
+
 
   const getUserCart = async () => {
     try {
       setCartLoader(true);
-      const response = await getRequest(true, `/cart`);
-      setCart(response.cart);
+      try {
+        const res = await axios.get(`http://localhost:8081/api/cart`, { headers: { crt_id: localStorage.getItem("userId") } });
+        setCart(res.data);
+        setLocalAdderss()
+      } catch (error) {
+        console.log(error);
+
+      }
       setCartLoader(false);
     } catch (error) {
       console.error("Error fetching cart data:", error);
       toast.error("Failed to load cart data.");
     }
   };
+  useEffect(() => {
+    getUserCart()
+  }, [])
 
-  const handleCouponChange = (e) => {
-    setCouponCode(e.target.value.toUpperCase());
-  };
 
-  const handleCoupon = async () => {
+
+
+  const setLocalAdderss = async () => {
     try {
-      const res = await axios.post(
-        `${backend}/coupons/check/${couponCode}`,
-        {
-          purchaseAmount: totalPrice,
-          phoneNumber: userDetails.mobileNo,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get('http://localhost:8081/api/users/', {
+        headers: { id: localStorage.getItem("userId") }
+      });
+      const { cust_address, cust_city, cust_state, cust_country, cust_zip } = response.data[0];
 
-      if (res.data.status === true) {
-        setDiscount(res.data.discountAmount);
-        setDiscountState(true);
-        toast.success("Coupon applied successfully!");
-      } else {
-        setDiscount(0);
-        setDiscountState(false);
-        toast.error(res.data.message || "Invalid coupon code");
-      }
+      setGlobleadd(`${cust_address} ${cust_city} ${cust_state} ${cust_country} ${cust_zip}`);
+
     } catch (error) {
-      setCouponCode('');
-      console.log(error);
-      toast.error(error.response.data.message || "Invalid coupon code");
+
     }
-  };
+
+
+  }
+
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [cart, discount, discountState, setLocalAdderss]);
 
   const checkout = async (event) => {
     event.preventDefault();
@@ -269,7 +289,7 @@ const UserCart = () => {
               <h1>Cart is Empty</h1>
             ) : (
               cart?.map((item, index) => (
-                <Cartproductcard key={index} data={item} />
+                <Cartproductcard sendDataOfEachCrtItemBackToParent={sendDataOfEachCrtItemBackToParent} key={index} data={item} />
               ))
             )}
           </div>
@@ -283,12 +303,7 @@ const UserCart = () => {
                 <p>Subtotal</p>
                 <p>{totalPrice - discount - shippingCharge}</p>
               </section>
-              {discountState && (
-                <section className="flex border-b-2 border-dashed justify-between">
-                  <p>Coupon Discount</p>
-                  <p>{discount}</p>
-                </section>
-              )}
+
               <section className="flex border-b-2 border-dashed justify-between">
                 <p>Shipping Charge</p>
                 <p>{shippingCharge}</p>
@@ -311,7 +326,8 @@ const UserCart = () => {
                 </p>
               </section>
               <section className="p-2 w-full border-2 rounded-md">
-                Santacruz India this si adderss
+                santa {globleadd
+                }
               </section>
             </div>
             <div>

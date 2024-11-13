@@ -171,7 +171,6 @@ const Nav = () => {
             <section
               onClick={() => {
                 handleNavigation("/cart")
-                window.location.reload();
               }}
               className="cursor-pointer px-2 hidden md:block"
             >

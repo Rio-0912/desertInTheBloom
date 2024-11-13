@@ -25,12 +25,7 @@ const ProfileSideBar = () => {
                   >
                       <CiDeliveryTruck size={17} /> My orders
                   </p>
-                  <p
-                      onClick={() => navigate("/profile/favorites")}
-                      className={`flex ${location.pathname === "/profile/favorites" ? "bg-white text-black shadow border-b-2 md:border-b-0 md:border-l-4 border-[#c9b156]" : ""} font-semibold text-sm gap-x-1 w-full my-1 items-center cursor-pointer p-[6px] select-none`}
-                  >
-                      <MdFavoriteBorder size={17} /> Favorites
-                  </p>
+                 
               </div>
           </div>
           <div className="w-full h-fit md:h-full p-5 overflow-y-auto md:w-[88%] md:p-4 rounded-md bg-white">
