@@ -5,6 +5,7 @@ import { Country, State, City } from 'country-state-city';
 import ProfileSkeleton from "../Skeleton/ProfileSkeleton";
 import { RiInformation2Line } from "react-icons/ri";
 import Nav from "../Components/Nav";
+import axios from 'axios';
 
 const ProfilePage = () => {
     const { user, isLoaded } = useUser();
@@ -33,39 +34,71 @@ const ProfilePage = () => {
         if (isLoaded) {
             loadUserData();
         }
-        
     }, [isLoaded]);
+
+    // Function to fetch user data from the API
+    const getUserData = async () => {
+        try {
+
+            const response = await axios.get('http://localhost:8081/api/users', {
+                headers: { id: localStorage.getItem("userId") }
+            });
+
+            // Assuming the response structure has these fields
+            const { cust_address, cust_city, cust_state, cust_country, cust_zip } = response.data[0];
+
+            // Set the state with the fetched data
+            const splitAddress = cust_address.split(',');
+
+            setRoomNo(splitAddress[0]?.trim() || "");
+            setArea(splitAddress[1]?.trim() || "");
+            setPincode(cust_zip || "");
+
+            // Find country
+            const country = countries.find(c => c.name === cust_country);
+            if (country) {
+                setSelectedCountry(country);
+                setCountryQuery(cust_country)
+                setStateQuery(cust_state)
+                setSelectedState(cust_state)
+                setCityQuery(cust_city)
+
+            }
+
+            setLoader(false);
+
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
+
+    // useEffect(() => {
+    //     if (selectedCountry) {
+    //         // When country is selected, find states
+    //         const states = State.getStatesOfCountry(selectedCountry.isoCode);
+    //         setStates(states);
+    //     }
+    // }, [selectedCountry]); // Re-run this when selectedCountry is updated
+
+    // useEffect(() => {
+    //     if (selectedState) {
+    //         // When state is selected, find cities
+    //         const citiesList = City.getCitiesOfState(selectedCountry.isoCode, selectedState.isoCode);
+    //         setCities(citiesList);
+    //     }
+    // }, [selectedState]); // Re-run this when selectedState is updated
+
+    // Call getUserData when component mounts
+    useEffect(() => {
+        getUserData();
+    }, []);
 
     const loadUserData = () => {
         if (user) {
             setUsername(user.firstName || "");
             setEmail(user.emailAddresses[0].emailAddress || "");
             setMobileNo(user.phoneNumbers[0]?.phoneNumber || "");
-            const address = user.publicMetadata?.address || "";
-            const splitAddress = address.split(',');
 
-            setRoomNo(splitAddress[0]?.trim() || "");
-            setArea(splitAddress[1]?.trim() || "");
-            setPincode(splitAddress[5]?.trim() || "");
-
-            const cityName = splitAddress[2]?.trim();
-            const stateName = splitAddress[3]?.trim();
-            const foundCountry = countries.find(country =>
-                State.getStatesOfCountry(country.isoCode).some(state => state.name === stateName)
-            );
-
-            if (foundCountry) {
-                setSelectedCountry(foundCountry);
-                setCountryQuery(foundCountry.name);
-                const foundState = State.getStatesOfCountry(foundCountry.isoCode).find(state => state.name === stateName);
-                setStates(State.getStatesOfCountry(foundCountry.isoCode));
-                setSelectedState(foundState);
-                if (foundState) {
-                    const foundCity = City.getCitiesOfState(foundCountry.isoCode, foundState.isoCode).find(city => city.name === cityName);
-                    setCities(City.getCitiesOfState(foundCountry.isoCode, foundState.isoCode));
-                    setSelectedCity(foundCity);
-                }
-            }
             setLoader(false);
         }
     };
@@ -123,15 +156,33 @@ const ProfilePage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate input fields
         if (!roomNo || !area || !selectedCity || !selectedState || !pincode) {
             toast.error("All fields of address are required.");
             return;
         }
 
-        const address = `${roomNo}, ${area}, ${selectedCity?.name}, ${selectedState?.name}, ${selectedCountry?.name}, ${pincode}`;
-        await user.update({ publicMetadata: { address } });
+        const addressData = {
+            id: user.id?.slice(-10),
+            address: `${roomNo}, ${area}`,
+            city: selectedCity?.name,
+            state: selectedState?.name,
+            country: selectedCountry?.name,
+            zip: pincode,
+        };
 
-        toast.success("Information Updated");
+        try {
+            const res = await axios.put('http://localhost:8081/api/users/updateAdderss', addressData);
+            if (res.status === 200) {
+                toast.success("Information Updated");
+            } else {
+                toast.error("Something went wrong");
+            }
+        } catch (error) {
+            toast.error("Failed to update information. Please try again.");
+            console.error(error);
+        }
     };
 
     return (
@@ -142,7 +193,6 @@ const ProfilePage = () => {
                 <ProfileSkeleton />
             ) : (
                 <div className=" ">
-
                     <section className=" flex gap-5 max-h-[50vh] items-center bg-gradient-to-b from-[#d7e394] to-[#ffffff] p-4 rounded-md">
                         <p className="rounded-full p-2 bg-gray-50 shadow">
                             <RiInformation2Line size={50} color="#d1bf6a" />
@@ -217,7 +267,6 @@ const ProfilePage = () => {
                                 <ul className="absolute z-10 max-h-60 overflow-auto w-full bg-white shadow-lg border">
                                     {filteredCountries.map((country) => (
                                         <li
-                                        
                                             key={country.id}
                                             onClick={() => handleCountrySelection(country)}
                                             className="cursor-pointer px-3 py-2 hover:bg-gray-100"
@@ -225,10 +274,10 @@ const ProfilePage = () => {
                                             {country.name}
                                         </li>
                                     ))}
-                                  
                                 </ul>
                             )}
                         </div>
+
                         {selectedCountry && (
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">State</label>
@@ -253,6 +302,7 @@ const ProfilePage = () => {
                                 )}
                             </div>
                         )}
+
                         {selectedState && (
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">City</label>
@@ -277,7 +327,8 @@ const ProfilePage = () => {
                                 )}
                             </div>
                         )}
-                        <div className="w-full">
+
+                        <div>
                             <label className="block text-sm font-medium text-gray-700">Pincode</label>
                             <input
                                 type="text"
@@ -286,11 +337,10 @@ const ProfilePage = () => {
                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
                             />
                         </div>
-                        <div>
-                            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md">
-                                Update Information
-                            </button>
-                        </div>
+
+                        <button type="submit" className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg">
+                            Update Information
+                        </button>
                     </form>
                 </div>
             )}

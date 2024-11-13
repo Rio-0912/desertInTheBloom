@@ -21,7 +21,6 @@ const Cartproductcard = ({ data }) => {
       const response = await postRequest(true, `/cart/${pid}`, item);
       if (response.status) {
         toast.success("Product removed successfully");
-        window.location.reload();
       }
     } catch (error) {
       console.error("Error removing product:", error);
@@ -46,7 +45,6 @@ const Cartproductcard = ({ data }) => {
       const response = await putRequest(true, `/cart/${pid}`, { quantity });
       if (response.status) {
         toast.success("Updated");
-        window.location.reload();
       }
     } catch (error) {
       console.error("Error updating cart:", error);
