@@ -34,15 +34,15 @@ const AllProducts = () => {
                     <h2 className="text-xl font-medium text-gray-600">All Products</h2>
                 </div>
 
-                <div className="">
+                <div className="m-auto">
                     {loader ? (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 px-3 md:px-6 md:mb-5">
+                        <div className="grid grid-cols-2 md:grid-cols-4 m-auto gap-2 px-3 md:px-6 md:mb-5">
                             {[...Array(8)].map((_, index) => (
                                 <ProductCardSkeleton key={index} />
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1   md:grid-cols-2 lg:grid-cols-3     gap-4 px-3 md:px-6">
+                        <div className="grid grid-cols-1 m-auto  md:grid-cols-2 lg:grid-cols-3     gap-4 px-3 md:px-6">
                             {products?.map((product) => (
                                 <ProductCard key={product.p_id} data={product} />  // Make sure you're passing a single product here
                             ))}

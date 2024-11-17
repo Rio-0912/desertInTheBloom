@@ -195,75 +195,36 @@ const UserCart = () => {
     calculateTotalPrice();
   }, [cart, discount, discountState, setLocalAdderss]);
 
+
+  const clearCart = () => {
+    setCart([]); // Reset the cart state to an empty array
+};
+
   const checkout = async (event) => {
     event.preventDefault();
+console.log("asdf");
 
-    if (cart.length === 0) {
-      toast.error("Cart is empty, nothing to buy.");
-      return;
-    }
-
-    if (!userDetails?.address) {
-      toast.error("Set your address in profile to place order.");
-      return;
-    }
 
     try {
-      const txnid = `txn_${Date.now()}`;
-      const formData = {
-        key: key,
-        txnid: txnid,
-        amount: totalPrice,
-        productinfo: "Product Information",
-        firstname: userDetails?.name,
-        email: userDetails?.email,
-        phone: userDetails?.mobileNo,
-        surl: `${backend}/pay/payu_success`,
-        furl: `${backend}/pay/payu_failure`,
-      };
+      const res = axios.post('http://localhost:8081/api/orders', {
+        customerId: localStorage.getItem("userId"),
+      })
+      if (res.status === 200) {
+        toast.success("Order placed successfully!");
 
-      const hashString = `${formData.key}|${formData.txnid}|${formData.amount}|${formData.productinfo}|${formData.firstname}|${formData.email}|||||||||||${salt}`;
-      const hash = crypto.SHA512(hashString).toString(crypto.enc.Hex);
-      formData.hash = hash;
+        // Clear the cart on the frontend if needed (optional)
+        clearCart()
 
-      const form = document.getElementById("payuForm");
-      for (const key in formData) {
-        if (formData.hasOwnProperty(key)) {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = formData[key];
-          form.appendChild(input);
-        }
       }
-      form.submit();
-
-      try {
-        if ((!(couponCode == "")) && discountState == true) {
-          const res = await axios.put(
-            `${backend}/auth/updateUserCoupon`,
-            {
-              couponCode: couponCode,
-              discount_Got: discount,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${token}`,
-              },
-            }
-          );
-        }
-      } catch (error) {
-        console.error("Error during checkout:", error);
-        toast.error("Something went wrong during checkout. Please try again.");
+      else {
+        toast.error("Failed to place order. Please try again.");
       }
     } catch (error) {
-      console.error("Error during checkout:", error);
-      toast.error("Something went wrong during checkout. Please try again.");
-    }
-  };
+      console.error(error);
 
+    }
+
+  }
   return (
     <div>
       <Nav />

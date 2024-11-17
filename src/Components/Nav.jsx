@@ -84,12 +84,12 @@ const Nav = () => {
 
 
   const navItems = [
-    { label: "Home", path: "/" },
-    { label: "Women", path: "/products", state: { category: "women" }, dropdown: true },
-    { label: "Men", path: `/products`, state: { categorys: "66b3d11d9fb33c73be35b7c6" } },
-    { label: "Modest Beauty", path: `/products`, state: { categorys: "66db259298dc750606980a33" } },
-    { label: "Timeless Wear", path: `/products`, state: { categorys: "66db26660f81720dc2db820f" } },
-    { label: "Our Story", path: "/about" },
+    // { label: "Home", path: "/" },
+    // { label: "Women", path: "/products", state: { category: "women" }, dropdown: true },
+    // { label: "Men", path: `/products`, state: { categorys: "66b3d11d9fb33c73be35b7c6" } },
+    // { label: "Modest Beauty", path: `/products`, state: { categorys: "66db259298dc750606980a33" } },
+    // { label: "Timeless Wear", path: `/products`, state: { categorys: "66db26660f81720dc2db820f" } },
+    // { label: "Our Story", path: "/about" },
   ];
 
   return (
@@ -142,14 +142,9 @@ const Nav = () => {
               className="cursor-pointer px-2 hidden md:block"
               onClick={() => setShowSearch(!showSearch)}
             >
-              <IoMdSearch size={32} color="gray" />
+              {/* <IoMdSearch size={32} color="gray" /> */}
             </section>}
-            <section
-              onClick={() => handleNavigation("/profile/favorites")}
-              className="cursor-pointer px-2 hidden md:block"
-            >
-              <IoIosHeartEmpty size={32} />
-            </section>
+            
            
             {isSignedIn ? (
               <section
