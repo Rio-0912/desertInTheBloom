@@ -7,6 +7,8 @@ import Nav from "../Components/Nav";
 import Footer from "../Components/Fotter";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import AddReview from '../Components/AddReview'
+import ReviewCard from '../Components/ReviewCard'
 
 const SingleProduct = () => {
     const { id } = useParams();
@@ -121,7 +123,7 @@ const SingleProduct = () => {
     }, [id]);
 
     return (
-        <div className="h-[100svh] w-[100svw] overflow-y-auto">
+        <div className=" overflow-y-auto">
             <Nav />
             <Toaster position="top-right" reverseOrder={false} />
             <div className="w-full">
@@ -179,11 +181,17 @@ const SingleProduct = () => {
                                             Add to Cart
                                         </button>
                                     )}
+                                    <AddReview productId={product.p_id} />
+
                                 </div>
                             </div>
+
                         </div>
+
                     )
-                )}
+                )}  
+                <ReviewCard productId={product?.p_id} />
+                
             </div>
             <Footer />
         </div>
