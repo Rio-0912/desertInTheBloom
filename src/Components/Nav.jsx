@@ -284,11 +284,7 @@ const Nav = () => {
           </section>
         )}
       </div>
-      <div className="fixed bottom-0 right-0 flex justify-center items-end mb-9 mr-4 z-50">
-        <a href="https://wa.me/919819953549" target="_blank" rel="noopener noreferrer" className="text-green-500">
-          <FaWhatsapp size={60} />
-        </a>
-      </div>
+      
     </div>
   );
 };

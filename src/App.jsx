@@ -12,6 +12,7 @@ import SingleProduct from './Pages/SingleProduct';
 import AboutUs from './Pages/AboutUs';
 import axios from 'axios';
 import toast from 'react-hot-toast'
+import OrderItems from './Components/OrderItems';
 
 function App() {
   const { isSignedIn, user } = useUser();
@@ -56,6 +57,7 @@ function App() {
           <Route path='/profile' element={<Profile />} >
             <Route index element={<UserProfileRio />} />
             <Route path='/profile/orders' element={<AllOrders />} />
+            <Route path='/profile/myorder/:orderId' element={<OrderItems />} />
           </Route>
           <Route path='/' element={<Layout />} />
           <Route path='/about' element={<AboutUs />} />

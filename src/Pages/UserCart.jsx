@@ -6,6 +6,7 @@ import CartCardSkeleton from "../Skeleton/CartCardSkeleton";
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react'
 import Nav from "../Components/Nav";
+import { set } from "date-fns";
 
 const UserCart = () => {
   const user = useUser();
@@ -198,29 +199,34 @@ const UserCart = () => {
 
   const clearCart = () => {
     setCart([]); // Reset the cart state to an empty array
-};
+  };
 
   const checkout = async (event) => {
     event.preventDefault();
-console.log("asdf");
-
+    console.log("asdf");
+    setCartLoader(true);
 
     try {
       const res = axios.post('http://localhost:8081/api/orders', {
         customerId: localStorage.getItem("userId"),
+        order_total: totalPrice
       })
       if (res.status === 200) {
         toast.success("Order placed successfully!");
 
         // Clear the cart on the frontend if needed (optional)
         clearCart()
-
       }
       else {
         toast.error("Failed to place order. Please try again.");
       }
+      setCartLoader(false);
+
+      clearCart();
     } catch (error) {
       console.error(error);
+      setCartLoader(false);
+
 
     }
 
@@ -229,14 +235,7 @@ console.log("asdf");
     <div>
       <Nav />
       <div className="md:px-8">
-        <form
-          id="payuForm"
-          action="https://test.payu.in/_payment"
-          method="post"
-          onSubmit={checkout}
-        >
-          <input type="submit" value="Submit" className="hidden" />
-        </form>
+
 
         <div className="flex flex-col border-r-2 gap-3 md:flex-row ">
           <div className=" w-full md:w-2/3 rounded-md md:h-[75vh] bg-gray-50 p-3 overflow-y-auto">
