@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { LuChevronRight } from "react-icons/lu";
 import moment from "moment/moment";
 import axios from "axios";
-import MyorderCardSkeleton from "../Skeleton/MyorderCardSkeleton";
 
 const AllOrders = () => {
   const navigate = useNavigate();
@@ -46,7 +45,9 @@ const AllOrders = () => {
                       ? "bg-green-100 text-green-500"
                       : item.order_status === "pending"
                         ? "bg-yellow-100 text-yellow-500"
-                        : "bg-red-100 text-red-500"
+                        : item.order_status === "shipped"
+                          ? "bg-[#ecf4c6] text-[#34C759]"
+                          : "bg-red-100 text-red-500"
                       }`}>
                       {item.order_status}
                     </p>

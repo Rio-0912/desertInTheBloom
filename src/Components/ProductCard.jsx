@@ -34,7 +34,7 @@ const ProductCard = ({ data, onProductClick, onAddToCart }) => {
                 {/* Description */}
                 <div className="mb-4">
                     <p className="text-sm text-gray-600 line-clamp-2">
-                        {data?.description || 'Product description goes here...'}
+                        {data?.p_desc || 'Product description goes here...'}
                     </p>
                 </div>
 

@@ -16,8 +16,6 @@ import OrderItems from './Components/OrderItems';
 
 function App() {
   const { isSignedIn, user } = useUser();
-
-
   const saveToDb = async (dataToStore) => {
     try {
       const res = await axios.post(`http://localhost:8081/api/users`, dataToStore);
