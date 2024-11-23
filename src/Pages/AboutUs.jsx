@@ -1,6 +1,5 @@
 import React from 'react';
 import Nav from '../Components/Nav';
-import Footer from '../components/Fotter';
 import About from '../assets/aboutus.jpeg';
 
 const AboutUs = () => {
@@ -19,7 +18,6 @@ const AboutUs = () => {
           <img src={About} alt="About Us" className='rounded-lg ' />
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
